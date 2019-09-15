@@ -45,6 +45,33 @@ namespace _1109.Controllers
             return result;
         }
 
+        [Route("api/messages/bytext/{text}")]
+        [HttpGet]
+        public IEnumerable<Message> GetBySenderText([FromUri] string text)
+        {
+            IEnumerable<Message> result = messages.Where(m => m.Text.ToUpper().Contains(text.ToUpper()));
+            return result;
+        }
+
+        // POST could be alternative for GET in some cases
+        [Route("api/messages/bytext")]
+        [HttpPost]
+        public IEnumerable<Message> BySenderTextPost([FromBody] SearchModel searchModel)
+        {
+            IEnumerable<Message> result = messages.Where(m => m.Text.ToUpper().Contains(searchModel.Text.ToUpper()));
+            return result;
+        }
+
+        [Route("api/messages/bytextandsender/{text}/{sender}")]
+        [HttpGet]
+        public IEnumerable<Message> GetByTextAndSender([FromUri] string text, [FromUri] string sender)
+        {
+            IEnumerable<Message> result_text = messages.Where(m => m.Text.ToUpper().Contains(text.ToUpper()));
+            IEnumerable<Message> result_sender = messages.Where(m => m.Sender.ToUpper().Contains(sender.ToUpper()));
+            return result_text.Concat(result_sender);
+        }
+
+
         [HttpPost]
         // POST api/messages
         public void Post([FromBody]Message message)
@@ -75,12 +102,25 @@ namespace _1109.Controllers
 
         }
 
+        // query string
+        // ...api/messages/search ? sender = d & text = o
+        // ...api/messages/search ? text = o & sender = d 
         [Route("api/messages/search")]
-        // GET api/messages
-        public List<Message> GetByFilter(string sender = null)
+        [HttpGet]
+        public IEnumerable<Message> GetByFilter(string sender = "", string text = "")
         {
-            List<Message> result = messages.Where(m => sender == null || m.Sender.ToUpper() == sender.ToUpper()).ToList();
-            return result;
+            if (sender == "" && text != "")
+                return messages.Where(m => m.Text.ToUpper().Contains(text.ToUpper()));
+            if (sender != "" && text == "")
+                return messages.Where(m => m.Sender.ToUpper().Contains(sender.ToUpper())); ;
+            return messages.Where(m => m.Sender.ToUpper().Contains(sender.ToUpper()) && m.Text.ToUpper().Contains(text.ToUpper()));
+        }
+
+        [HttpGet]
+        public IEnumerable<Message> BiggerThanId(...)
+        {
+            // if nothing sent return all
+            // if id was sent return all messages with ID bigger than the id sent...
         }
     }
 }
