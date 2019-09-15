@@ -23,17 +23,23 @@ namespace _1109.Controllers
         }
 
         // GET api/messages
-        public List<Message> Get()
+        public HttpResponseMessage Get()
         {
-            return messages;
+            if (messages.Count == 0)
+                return Request.CreateResponse(HttpStatusCode.NoContent);
+            HttpResponseMessage msg = Request.CreateResponse(HttpStatusCode.OK, messages);
+            return msg;
         }
 
         // GET api/messages/5
         [HttpGet]
-        public Message Get([FromUri] int id)
+        public HttpResponseMessage Get([FromUri] int id)
         {
             Message result = messages.FirstOrDefault(m => m.Id == id);
-            return result;
+            if (result == null)
+                return Request.CreateResponse(HttpStatusCode.NoContent);
+            HttpResponseMessage msg = Request.CreateResponse(HttpStatusCode.OK, result);
+            return msg;
         }
 
 
@@ -116,11 +122,13 @@ namespace _1109.Controllers
             return messages.Where(m => m.Sender.ToUpper().Contains(sender.ToUpper()) && m.Text.ToUpper().Contains(text.ToUpper()));
         }
 
+        [Route("api/messages/biggerthanid")]
         [HttpGet]
-        public IEnumerable<Message> BiggerThanId(...)
+        public IEnumerable<Message> BiggerThanId(int id = 0)
         {
             // if nothing sent return all
             // if id was sent return all messages with ID bigger than the id sent...
+            return messages.Where(m => m.Id > id);
         }
     }
 }
