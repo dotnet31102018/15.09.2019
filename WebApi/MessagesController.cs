@@ -1,4 +1,4 @@
-﻿using _1109.Models;
+using _1109.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,13 +22,13 @@ namespace _1109.Controllers
             counter = messages.Count;
         }
 
-        // GET api/values
+        // GET api/messages
         public List<Message> Get()
         {
             return messages;
         }
 
-        // GET api/values/5
+        // GET api/messages/5
         [HttpGet]
         public Message Get([FromUri] int id)
         {
@@ -37,7 +37,6 @@ namespace _1109.Controllers
         }
 
 
-        // GET api/values/5
         [Route("api/messages/bysender/{sender}")]
         [HttpGet]
         public IEnumerable<Message> GetBySenderName([FromUri] string sender)
@@ -47,7 +46,7 @@ namespace _1109.Controllers
         }
 
         [HttpPost]
-        // POST api/values
+        // POST api/messages
         public void Post([FromBody]Message message)
         {
             message.Id = ++counter;
@@ -55,7 +54,7 @@ namespace _1109.Controllers
         }
 
         [HttpPut]
-        // PUT api/values/5
+        // PUT api/messages/5
         public void Put(int id, [FromBody]Message message)
         {
             Message result = messages.FirstOrDefault(m => m.Id == id);
@@ -67,7 +66,7 @@ namespace _1109.Controllers
         }
 
         [HttpDelete]
-        // DELETE api/values/5
+        // DELETE api/messages/5
         public void Delete(int id)
         {
             Message result = messages.FirstOrDefault(m => m.Id == id);
@@ -77,7 +76,7 @@ namespace _1109.Controllers
         }
 
         [Route("api/messages/search")]
-        // GET api/values
+        // GET api/messages
         public List<Message> GetByFilter(string sender = null)
         {
             List<Message> result = messages.Where(m => sender == null || m.Sender.ToUpper() == sender.ToUpper()).ToList();
